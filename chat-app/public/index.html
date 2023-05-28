@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Chat App</title>
+    <style>
+      #messages {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      #messages li {
+        padding: 5px 10px;
+      }
+
+      #messages li:nth-child(odd) {
+        background: #eee;
+      }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form id="chat-form" action="">
+      <input id="message-input" autocomplete="off" /><button>Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+
+      const form = document.getElementById("chat-form");
+      const input = document.getElementById("message-input");
+      const messages = document.getElementById("messages");
+
+      let nickname = "";
+
+      while (!nickname) {
+        nickname = prompt("Please enter your nickname:");
+      }
+
+      socket.emit("new user", nickname);
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit("chat message", input.value);
+          input.value = "";
+        }
+      });
+
+      socket.on("chat message", (message) => {
+        const li = document.createElement("li");
+        li.textContent = message;
+        messages.appendChild(li);
+      });
+
+      socket.on("user joined", (nickname) => {
+        const li = document.createElement("li");
+        li.textContent = `${nickname} joined the chat`;
+        messages.appendChild(li);
+      });
+
+      socket.on("user left", (nickname) => {
+        const li = document.createElement("li");
+        li.textContent = `${nickname} left the chat`;
+        messages.appendChild(li);
+      });
+    </script>
+  </body>
+</html>
