@@ -15,8 +15,9 @@ io.on('connection', (socket) => {
 
   socket.on('chat message', (message) => {
     const nickname = users[socket.id];
-    const timestamp = new Date().toLocaleTimeString();
-    const formattedMessage = `[${timestamp}] ${nickname}: ${message}`;
+    // const timestamp = new Date().toLocaleTimeString();
+    // const formattedMessage = `[${timestamp}] ${nickname}: ${message}`;
+    const formattedMessage = `[ ${nickname}: ${message}`;
     io.emit('chat message', formattedMessage);
   });
 
